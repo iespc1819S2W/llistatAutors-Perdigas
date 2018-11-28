@@ -52,13 +52,24 @@ if(isset($_POST['mantener2'])){
 }
 
 $limite = 20;
+$guardarNumero = 0;
+$sql1 = "SELECT COUNT(*) as cuenta FROM autors";
+$cursor2 = $mysqli->query($sql1) or die($sql1);
+if($row2 = $cursor2->fetch_assoc()){
+    $guardar2 = $row2['cuenta'];
+    $guardarNumero = $guardar2 / $limite;
+}
 if(isset($_POST['avanzar'])){
+    if(!($numeroPagina == $guardarNumero)){
     $numero = $numero + $limite;
     $numeroPagina = $numeroPagina +  1;
 }
+}
 if(isset($_POST['retroceder'])){
+    if($numeroPagina != 1){
     $numero = $numero - $limite;
     $numeroPagina = $numeroPagina - 1;
+    }
 }
 if(isset($_POST['retrocederLimite'])){
     $numeroPagina = 1;
@@ -100,7 +111,7 @@ echo "<input type='hidden' name='mantener' value='$numero'/>";
 echo "<input type='hidden' name='mantener2' value='$numeroPagina'/>";
 echo "<input type='hidden' name='oculto' value='$orden'/>";
 echo "</form>";
-echo "$numeroPagina";
+echo "$numeroPagina"."/ "."$guardarNumero";
 
 //Query per ordenacio y cerca
 $query = "SELECT ID_AUT, NOM_AUT FROM AUTORs $cerca";

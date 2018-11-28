@@ -26,6 +26,7 @@ if(isset($_POST['codiASC'])){
 if(isset($_POST['codiDESC'])){
     $orden = "ID_AUT DESC";
 }
+
 $mysqli = new mysqli("localhost", "root", "", "biblioteca");
 // Comprobar conexion
 if ($mysqli->connect_error) {
@@ -53,11 +54,11 @@ if(isset($_POST['mantener2'])){
 
 $limite = 20;
 $guardarNumero = 0;
-$sql1 = "SELECT COUNT(*) as cuenta FROM autors";
+$sql1 = "SELECT COUNT(*) as cuenta FROM autors $cerca";
 $cursor2 = $mysqli->query($sql1) or die($sql1);
 if($row2 = $cursor2->fetch_assoc()){
     $guardar2 = $row2['cuenta'];
-    $guardarNumero = $guardar2 / $limite;
+    $guardarNumero = ceil($guardar2 / $limite);
 }
 if(isset($_POST['avanzar'])){
     if(!($numeroPagina == $guardarNumero)){
@@ -76,13 +77,13 @@ if(isset($_POST['retrocederLimite'])){
     $numero = 0;
 }
 if(isset($_POST['avanzarLimite'])){
-    $cuentaSql = "SELECT COUNT(*) as cuenta FROM autors";
+    $cuentaSql = "SELECT COUNT(*) as cuenta FROM autors $cerca";
     $cursor2 = $mysqli->query($cuentaSql) or die($cuentaSql);
     if($row1 = $cursor2->fetch_assoc()){
         $guardar = $row1['cuenta'];
     }
     $numero = $guardar - $limite;
-    $numeroPagina = $guardar / $limite;
+    $numeroPagina = ceil($guardar / $limite);
 }
 
 
@@ -92,7 +93,7 @@ $mysqli->set_charset("utf8");
 echo "<br/>";
 echo "<form name='input' action='autors.php' method='post' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
 echo "<h1>Introdueix un nom o codi per cercar</h1>";
-echo "Nom o Codi: <input type='text' name='nom' value=''/>";
+echo "Nom o Codi: <input type='text' name='nom' value='$nom'/>";
 echo "<input type='submit' name='buscador' value='CERCAR'/>";
 echo "<br/>";
 echo "<br/>";

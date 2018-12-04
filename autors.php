@@ -14,18 +14,28 @@
    if(isset($_POST['oculto'])){
        $orden = $_POST['oculto'];
    }
-if(isset($_POST['nomASC'])){
+    if(isset($_POST['nomASC'])){
     $orden = "NOM_AUT ASC";
-}
-if(isset($_POST['nomDESC'])){
+    }
+    if(isset($_POST['nomDESC'])){
     $orden = "NOM_AUT DESC";
-}
-if(isset($_POST['codiASC'])){
+    }
+    if(isset($_POST['codiASC'])){
     $orden = "ID_AUT ASC";
-}
-if(isset($_POST['codiDESC'])){
+    }
+    if(isset($_POST['codiDESC'])){
     $orden = "ID_AUT DESC";
-}
+    }
+    if(isset($_POST['borrar'])){
+        $borrar = $_POST['borrar'];
+        $queryElimina = "DELETE from AUTORS where 'ID_AUT'=$borrar";
+        $cursor=$mysqli->$query($queryElimina) OR die($queryElimina);
+    }
+    if(isset($_POST['añadir'])){
+        $añadir = $_POST['añadir'];
+        $queryCrear = "UPDATE AUTORS SET ID_AUT = auto, NOM_AUT = ";
+        $cursor=$mysqli->$query($queryCrear) OR die($queryCrear);
+    }
 
 $mysqli = new mysqli("localhost", "root", "", "biblioteca");
 // Comprobar conexion
@@ -91,8 +101,8 @@ echo "Conexion realizada";
 echo "<br>";
 $mysqli->set_charset("utf8");
 echo "<br/>";
-echo "<form name='input' action='autors.php' method='post' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
-echo "<h1>Introdueix un nom o codi per cercar</h1>";
+echo "<form name='formulari' action='autors.php' method='post' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
+echo "<h3>Introdueix un nom o codi per cercar</h3>";
 echo "Nom o Codi: <input type='text' name='nom' value='$nom'/>";
 echo "<input type='submit' name='buscador' value='CERCAR'/>";
 echo "<br/>";
@@ -112,7 +122,8 @@ echo "<input type='hidden' name='mantener' value='$numero'/>";
 echo "<input type='hidden' name='mantener2' value='$numeroPagina'/>";
 echo "<input type='hidden' name='oculto' value='$orden'/>";
 echo "</form>";
-echo "$numeroPagina"."/ "."$guardarNumero";
+
+echo "$numeroPagina"."/ "."$guardarNumero <br/>";
 
 //Query per ordenacio y cerca
 $query = "SELECT ID_AUT, NOM_AUT FROM AUTORs $cerca";
@@ -122,8 +133,19 @@ $query .= "ORDER BY $orden LIMIT $numero,$limite";
 echo "<table border='1' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
 if ($cursor = $mysqli->query($query) or die($query)) {
     while ($row = $cursor->fetch_assoc()) {
-        echo "<tr><td>" . $row["ID_AUT"] . "</td><td>" . $row["NOM_AUT"] . "</td></tr>";
+        echo "<tr><td>" . $row["ID_AUT"] . "</td><td>" . $row["NOM_AUT"] . "</td>";
+        echo "<td><button type='submit' form='formulari' name='crear' value='{$row["ID_AUT"]}'>
+                Crear</button></td>";
+        echo "<td><button type='submit' form='formulari' name='borrar' value='{$row["ID_AUT"]}'>
+                Borrar</button></td></tr>";
+
     }
+   
+   
+    echo "Afegir: <input type='text' form='formulari' name='nom' value=''/>";
+    echo "<button type='submit' form='formulari' name='añadir' value='{$row["ID_AUT"]}'>
+    Añadir</button>";
+    echo "<br/>";
     $cursor->free();
 }
 $mysqli->close();

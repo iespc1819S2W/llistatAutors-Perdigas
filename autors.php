@@ -146,14 +146,13 @@ if ($cursor = $mysqli->query($query) or die($query)) {
                 Edita</button></td>";
             if($editar == $row["ID_AUT"]){
                 echo "<tr>";
-				echo "<td>".$row["ID_AUT"]."</td>";//el id no lo modificamos se queda igual por lo tanto solo lo generamos
+				echo "<td>".$row["ID_AUT"]."</td>";
 				echo "<td>";
                 echo "<input type='text' name='editarAutor' value='{$row["NOM_AUT"]}' form='formulari'>";
                 echo "</td>";
                 echo "<td>";
-						echo "<button type='submit' form='formulari' name='guardar' value='{$row["ID_AUT"]}'>Confirmar</button>
-							<button type='submit' form='formulari' name='Cancelar' value='{$row["ID_AUT"]}'>Cancelar </button>
-					        </td>";
+				echo "<button type='submit' form='formulari' name='guardar' value='{$row["ID_AUT"]}'>Confirmar</button>
+				<button type='submit' form='formulari' name='Cancelar' value='{$row["ID_AUT"]}'>Cancelar </button></td>";
             }
         echo "<td><button type='submit' form='formulari' name='borrar' value='{$row["ID_AUT"]}'>
                 Borrar</button></td></tr>";

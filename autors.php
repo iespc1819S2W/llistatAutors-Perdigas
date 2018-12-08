@@ -7,10 +7,19 @@
  </head>
  <body>
  <header>
- <img class='imagen' src='IesPau.png'><br/>
+    <img style='width: 450px;' class='imagen' src='IesPau.png'/>
  </header>
  <?php
-   $orden = "NOM_AUT ASC";
+ $mysqli = new mysqli("localhost", "root", "", "biblioteca");
+ // Comprobar conexion
+ if ($mysqli->connect_error) {
+     die("Conexion fallida: " . $mysqli->connect_error);
+ }
+ echo "Conexion realizada";
+ $mysqli->set_charset("utf8");
+
+ //ordenacion
+   $orden = "ID_AUT ASC";
    if(isset($_POST['oculto'])){
        $orden = $_POST['oculto'];
    }
@@ -26,23 +35,31 @@
     if(isset($_POST['codiDESC'])){
     $orden = "ID_AUT DESC";
     }
+    //borrar
+    $borrar = "";
     if(isset($_POST['borrar'])){
         $borrar = $_POST['borrar'];
-        $queryElimina = "DELETE from AUTORS where 'ID_AUT'=$borrar";
-        $cursor=$mysqli->$query($queryElimina) OR die($queryElimina);
+        $queryElimina = "DELETE from AUTORS where ID_AUT = $borrar";
+        $cursor=$mysqli->query($queryElimina) OR die($queryElimina);
     }
-    if(isset($_POST['añadir'])){
-        $añadir = $_POST['añadir'];
-        $queryCrear = "UPDATE AUTORS SET ID_AUT = auto, NOM_AUT = ";
-        $cursor=$mysqli->$query($queryCrear) OR die($queryCrear);
+    //editar
+    $editar  = "";
+    if(isset($_POST['editar'])){
+        $editar = $_POST['editar'];
     }
-
-$mysqli = new mysqli("localhost", "root", "", "biblioteca");
-// Comprobar conexion
-if ($mysqli->connect_error) {
-    die("Conexion fallida: " . $mysqli->connect_error);
-}
-
+    if(isset($_POST['guardar'])){
+        $editarAutor = $mysqli->real_escape_string($_POST['editarAutor']);
+        $guardar = $mysqli->real_escape_string($_POST['guardar']);
+        $queryGuardar = "UPDATE AUTORS SET NOM_AUT ='$editarAutor' where ID_AUT = $guardar";
+	    $resultat = $mysqli->query($queryGuardar) or die($queryGuardar);
+    }
+    
+  //Añadir autor
+    if(isset($_POST['añadir'])) {
+        $introdueix = $mysqli->real_escape_string($_POST['introduce']);
+        $sql = "INSERT INTO AUTORS(ID_AUT, NOM_AUT) values((SELECT max(ID_AUT)+1 from autors as TOTAL), '$introdueix')";
+        $cursor3 = $mysqli->query($sql) OR die("Error query" .$sql);
+    }
 //Cerca
 $cerca = "";
 $nom = (isset($_POST['nom'])? $_POST['nom'] : '');
@@ -95,17 +112,11 @@ if(isset($_POST['avanzarLimite'])){
     $numero = $guardar - $limite;
     $numeroPagina = ceil($guardar / $limite);
 }
-
-
-echo "Conexion realizada";
-echo "<br>";
-$mysqli->set_charset("utf8");
-echo "<br/>";
-echo "<form name='formulari' action='autors.php' method='post' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
-echo "<h3>Introdueix un nom o codi per cercar</h3>";
+echo "<form name='formulari' id='formulari' action='' method='post' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
+echo "<fieldset style='width:300px; margin-left:auto;  margin-right:auto;'><legend><b>Introdueix un nom o codi per cercar</b></legend>";
 echo "Nom o Codi: <input type='text' name='nom' value='$nom'/>";
 echo "<input type='submit' name='buscador' value='CERCAR'/>";
-echo "<br/>";
+echo "</fieldset>";
 echo "<br/>";
 echo "<input type='submit' name='nomASC' value='A--Z'/>";
 echo "<input type='submit' name='nomDESC' value='Z--A'/>";
@@ -113,18 +124,15 @@ echo " ";
 echo "<input type='submit' name='codiASC' value='0--9'/>";
 echo "<input type='submit' name='codiDESC' value='9--0'/>";
 echo "<br/>";
-echo "<input type='submit' name='retrocederLimite' value='<<' />";
-echo "<input type='submit' name='retroceder' value='<' />";
+echo "<input type='submit'  name='retrocederLimite' value='<<' />";
+echo "<input type='submit'  name='retroceder' value='<' />";
 echo " ";
-echo "<input type='submit' name='avanzar' value='>' />";
-echo "<input type='submit' name='avanzarLimite' value='>>' />";
+echo "<input type='submit'  name='avanzar' value='>' />";
+echo "<input type='submit'  name='avanzarLimite' value='>>' />";
 echo "<input type='hidden' name='mantener' value='$numero'/>";
 echo "<input type='hidden' name='mantener2' value='$numeroPagina'/>";
 echo "<input type='hidden' name='oculto' value='$orden'/>";
 echo "</form>";
-
-echo "$numeroPagina"."/ "."$guardarNumero <br/>";
-
 //Query per ordenacio y cerca
 $query = "SELECT ID_AUT, NOM_AUT FROM AUTORs $cerca";
 $query .= "ORDER BY $orden LIMIT $numero,$limite";
@@ -134,22 +142,38 @@ echo "<table border='1' style='text-align:center;  margin-left:auto;  margin-rig
 if ($cursor = $mysqli->query($query) or die($query)) {
     while ($row = $cursor->fetch_assoc()) {
         echo "<tr><td>" . $row["ID_AUT"] . "</td><td>" . $row["NOM_AUT"] . "</td>";
-        echo "<td><button type='submit' form='formulari' name='crear' value='{$row["ID_AUT"]}'>
-                Crear</button></td>";
+        echo "<td><button type='submit' form='formulari' name='editar' value='{$row["ID_AUT"]}'>
+                Edita</button></td>";
+            if($editar == $row["ID_AUT"]){
+                echo "<tr>";
+				echo "<td>".$row["ID_AUT"]."</td>";//el id no lo modificamos se queda igual por lo tanto solo lo generamos
+				echo "<td>";
+                echo "<input type='text' name='editarAutor' value='{$row["NOM_AUT"]}' form='formulari'>";
+                echo "</td>";
+                echo "<td>";
+						echo "<button type='submit' form='formulari' name='guardar' value='{$row["ID_AUT"]}'>Confirmar</button>
+							<button type='submit' form='formulari' name='Cancelar' value='{$row["ID_AUT"]}'>Cancelar </button>
+					        </td>";
+            }
         echo "<td><button type='submit' form='formulari' name='borrar' value='{$row["ID_AUT"]}'>
                 Borrar</button></td></tr>";
-
-    }
-   
-   
-    echo "Afegir: <input type='text' form='formulari' name='nom' value=''/>";
-    echo "<button type='submit' form='formulari' name='añadir' value='{$row["ID_AUT"]}'>
-    Añadir</button>";
+             }
+    echo "</table>";   
     echo "<br/>";
+    echo "$numeroPagina"."/ "."$guardarNumero <br/>";
+    echo "<br/>"; 
     $cursor->free();
 }
-$mysqli->close();
+//formulari afegir
+echo "<form action='' method='post' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
+echo "<fieldset style='width:300px; margin-left:auto;  margin-right:auto;'><legend><b>Afegeix un autor</b></legend>";
+echo "Introduir: <input type='text' name='introduce' id='introduce'/>";
+echo "<button type='submit' name='añadir'>Afegeix</button>";
+echo "<br/>";
+echo "</fieldset>";
+echo "</form>";
 
+$mysqli->close();
 ?>
  </body>
  </html>

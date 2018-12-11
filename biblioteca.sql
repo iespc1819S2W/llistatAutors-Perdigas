@@ -7,7 +7,6 @@
 -- Versió del servidor: 5.1.54
 -- Versió de PHP : 5.3.5-1ubuntu7.11
 
-
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 
@@ -19,8 +18,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 -- Base de dades: `biblioteca`
 --
-CREATE DATABASE biblioteca;
-use biblioteca;
+
 -- --------------------------------------------------------
 
 --

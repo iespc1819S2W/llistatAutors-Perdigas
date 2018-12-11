@@ -10,6 +10,7 @@
     <img style='width: 450px;' class='imagen' src='IesPau.png'/>
 </header>
 <?php
+ include ("funciones.php");
 $mysqli = new mysqli("localhost", "root", "", "biblioteca");
 // Comprobar conexion
 if ($mysqli->connect_error) {
@@ -136,20 +137,7 @@ echo "</form>";
 
 //SELECT 
 $defecte = "Tria una opció...";
-function selector($mysqli, $nom, $defecte, $formulari, $null=true) {
-    echo "<select form='$formulari' name='$nom'>";
-    //null
-    $vacio = '';
-    if($null){
-        echo "<option value=$vacio>$defecte</option>";
-    }
-    $querySelect = "SELECT NACIONALITAT FROM NACIONALITATS";
-    $cursor = $mysqli->query($querySelect) or die($querySelect);
-    while($row = $cursor->fetch_assoc()){
-        echo '<option value="'.$row['NACIONALITAT'].'">'.$row['NACIONALITAT'].'</option>';       
-    }
-    echo "</select>";   
-}
+
 
 //Query per ordenacio y cerca
 $query = "SELECT ID_AUT, NOM_AUT, FK_NACIONALITAT as NACIONALITAT FROM AUTORs $cerca";

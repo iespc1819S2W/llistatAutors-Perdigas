@@ -1,4 +1,19 @@
+*{
+    margin-left:auto;  margin-right:auto; text-align: center;
+}
 #formulari{
    margin-left:auto;  margin-right:auto;
 
+}
+#primer{
+    width:500px;
+}
+table{
+  text-align:center; width:600px;  margin-left:auto;  margin-right:auto;
+}
+#segon{
+    width:550px; margin-left:auto;  margin-right:auto;
+}
+img{
+   width:550px;
 }

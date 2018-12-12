@@ -7,7 +7,7 @@
 </head>
 <body>
    <header>
-    <img style='width: 450px;' class='imagen' src='IesPau.png'/>
+    <img src='IesPau.png'/>
 </header>
 <?php
  include ("funciones.php");
@@ -123,7 +123,7 @@ $numero = $guardar - $limite;
 $numeroPagina = ceil($guardar / $limite);
 }
 echo "<form name='formulari' id='formulari' action='' method='post'>";
-   echo "<fieldset style='width:500px; margin-left:auto;  margin-right:auto;'><legend><b>Introdueix per cercar</b></legend>";
+   echo "<fieldset id='primer'><legend><b>Introdueix per cercar</b></legend>";
     echo "Nom o ID: <input type='text' name='nom' value='$nom'/>";
     echo "<input type='submit' name='buscador' value='CERCAR'/>";
    echo "</fieldset>";
@@ -144,7 +144,7 @@ $query = "SELECT ID_AUT, NOM_AUT, FK_NACIONALITAT as NACIONALITAT FROM AUTORs $c
 $query .= "ORDER BY $orden LIMIT $numero,$limite";
 
 //taula
-echo "<table border='1' style='text-align:center; width:600px;  margin-left:auto;  margin-right:auto;'>";
+echo "<table border='1'>";
     echo "<tr><th>ID<input type='submit' form='formulari' name='codiASC' value='&uarr;'/>
          <input type='submit' form='formulari' name='codiDESC' value='&darr;'/></th>
 
@@ -183,8 +183,8 @@ echo "<table border='1' style='text-align:center; width:600px;  margin-left:auto
         $cursor->free();
     }
     //formulari afegir
-    echo "<form action='' id='formulari2' name='formulari2' method='post' style='text-align:center;  margin-left:auto;  margin-right:auto;'>";
-        echo "<fieldset style='width:550px; margin-left:auto;  margin-right:auto;'><legend><b>Afegeix un autor</b></legend>";
+    echo "<form action='' id='formulari2' name='formulari2' method='post'>";
+        echo "<fieldset id='segon'><legend><b>Afegeix un autor</b></legend>";
             echo "Nom: <input type='text' name='introduce' id='introduce'/>";
             echo " Nacionalitat: ";
             echo selector($mysqli, 'paisos2', $defecte, 'formulari2');
